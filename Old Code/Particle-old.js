@@ -1,5 +1,3 @@
-import { MathHelper } from "./MathHelper";
-
 export class Particle {
     x;
     y;
@@ -10,7 +8,6 @@ export class Particle {
     originX;
     originY;
     circle;
-    closeEnoughTarget = 50;
 
     constructor(_x, _y , _vx, _vy, _radius, _color,two) {
         this.x = _x;
@@ -21,12 +18,10 @@ export class Particle {
         this.color = _color;
         this.originX = _x;
         this.originY = _y;
-    }
-    move(){
-        proximityMult = 1;
-        distance = MathHelper.distance(this.x,this.y,this.originX,this.originY);
-        if (distance < this.closeEnoughTarget) {
-            proximityMult = distance/this.closeEnoughTarget;
-        }
+        this.circle = two.makeCircle(_x, _y, _radius);
+        this.circle.fill = '#FF8000';
+        // And accepts all valid CSS color:
+        this.circle.stroke = 'orangered';
+        this.circle.linewidth = 5;
     }
 }

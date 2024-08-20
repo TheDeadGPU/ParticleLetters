@@ -1,4 +1,4 @@
-import { Particle } from './Particle.js';
+import { Particle } from './Particle-old.js';
 
 export class ParticleHelper {
     constructor() {}

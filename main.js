@@ -1,30 +1,42 @@
-// Make an instance of two and place it on the page.
-var params = {
-    fullscreen: true
-  };
-  var elem = document.body;
-  var two = new Two(params).appendTo(elem);
-  
-  // Two.js has convenient methods to make shapes and insert them into the scene.
-  var radius = 50;
-  var x = two.width * 0.5;
-  var y = two.height * 0.5 - radius * 1.25;
-  var circle = two.makeCircle(x, y, radius);
-  
-  y = two.height * 0.5 + radius * 1.25;
-  var width = 100;
-  var height = 100;
-  var rect = two.makeRectangle(x, y, width, height);
-  
-  // The object returned has many stylable properties:
-  circle.fill = '#FF8000';
-  // And accepts all valid CSS color:
-  circle.stroke = 'orangered';
-  circle.linewidth = 5;
-  
-  rect.fill = 'rgb(0, 200, 255)';
-  rect.opacity = 0.75;
-  rect.noStroke();
-  
-  // Don’t forget to tell two to draw everything to the screen
-  two.update();
+import Two from 'https://cdn.skypack.dev/two.js@latest';
+import { ParticleEngine } from './ParticleEngine';
+import { Particle } from './Particle';
+
+var two = new Two({
+  type: Two.Types.svg,
+  fullscreen: true,
+  autostart: true
+}).appendTo(document.body);
+
+two.renderer.domElement.style.background = 'black';
+two.renderer.domElement.style.cursor = 'none';
+
+// Initialize
+const engine = new ParticleEngine(two);
+engine.Add(new Particle(1,1,1,1,50,"green",two))
+engine.Add(new Particle(1,1,1,1,25,"green",two))
+
+var cx = two.width / 2;
+var cy = two.height / 2;
+var delta = new Two.Vector();
+var mouse = new Two.Vector(cx, cy);
+var drag = 0.33;
+var radius = 50;
+
+var circle = two.makeCircle(400, 250, 75);
+circle.fill = 'yellow';
+circle.stroke = 'red';
+circle.linewidth = 4;
+
+// Mouse Position
+window.addEventListener('mousemove', function(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  }, false);
+
+// Animation Loop
+two.bind('update', function() {
+    circle.position.x = mouse.x;
+    circle.position.y = mouse.y;
+    engine.Animate(mouse.x,mouse.y);
+});
