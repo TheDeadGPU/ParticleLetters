@@ -13,8 +13,16 @@ two.renderer.domElement.style.cursor = 'none';
 
 // Initialize
 const engine = new ParticleEngine(two);
-engine.Add(new Particle(1,1,1,1,50,"green",two))
-engine.Add(new Particle(1,1,1,1,25,"green",two))
+engine.Add(new Particle(1,1,two))
+engine.Add(new Particle(500,500,two))
+engine.Add(new Particle(500,510,two))
+engine.Add(new Particle(500,520,two))
+engine.Add(new Particle(500,530,two))
+engine.Add(new Particle(500,540,two))
+engine.Add(new Particle(500,550,two))
+engine.Add(new Particle(500,560,two))
+engine.Add(new Particle(500,570,two))
+engine.Add(new Particle(500,580,two))
 
 var cx = two.width / 2;
 var cy = two.height / 2;
@@ -29,10 +37,22 @@ circle.stroke = 'red';
 circle.linewidth = 4;
 
 // Mouse Position
-window.addEventListener('mousemove', function(e) {
+function onMouseMove(e) {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
-  }, false);
+  }
+
+function onTouchMove(e){
+  if(e.touches.length > 0 ){
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+  }
+}
+
+function onTouchEnd(e){
+mouse.x = -9999;
+mouse.y = -9999;
+}
 
 // Animation Loop
 two.bind('update', function() {
@@ -40,3 +60,7 @@ two.bind('update', function() {
     circle.position.y = mouse.y;
     engine.Animate(mouse.x,mouse.y);
 });
+
+window.addEventListener("mousemove", onMouseMove);
+window.addEventListener("touchmove", onTouchMove);
+window.addEventListener("touchend", onTouchEnd);

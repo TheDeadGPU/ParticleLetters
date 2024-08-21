@@ -13,12 +13,6 @@ export class ParticleEngine {
 
     Add(_particle) {
         this.particles.push(_particle);
-        var circle = this.two.makeCircle(_particle.x, _particle.y, _particle.radius);
-        circle.fill = '#FF8000';
-        circle.stroke = 'orangered';
-        circle.linewidth = 5;
-        this.particleShapes.push(circle);
-        //this.two.update();
     }
     Animate(_mousePositionX, _mousePositionY) {
         const currentTime = new Date();
@@ -28,7 +22,8 @@ export class ParticleEngine {
         this.lastTime = currentTime;
     }
     AnimateParticles(_timeDiff, _mousePositionX, _mousePositionY) {
-        proximityMult = 1;
-        distance 
+        for (let i = 0; i < this.particles.length; i++) {
+            this.particles[i].render(_mousePositionX, _mousePositionY);
+        }
     }
 }
