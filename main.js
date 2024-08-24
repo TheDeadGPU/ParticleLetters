@@ -13,10 +13,6 @@ two.renderer.domElement.style.background = 'black';
 two.renderer.domElement.style.cursor = 'none';
 
 const mouse = new Two.Vector(two.width / 2, two.height / 2);
-const circle = two.makeCircle(400, 250, 16);
-circle.fill = 'blue';
-circle.stroke = 'red';
-circle.linewidth = 4;
 
 function canvasInit() {
   engine.ResetEngine();
@@ -63,8 +59,6 @@ function debounce(func, wait) {
 
 two.bind('update', () => {
   engine.Animate(mouse.x, mouse.y);
-  circle.position.x = mouse.x;
-  circle.position.y = mouse.y;
 });
 
 canvasInit();
