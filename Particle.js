@@ -1,9 +1,8 @@
-import { MathHelper } from "./MathHelper";
-
 export class Particle {
     x;
     y;
-    radius = Math.random()*5 + 2;
+    //radius = Math.random()*5 + 2;
+    radius = 5;
     color;
     originX;
     originY;
@@ -14,12 +13,12 @@ export class Particle {
     friction = Math.random()*0.05 + 0.94;
     two;
     circle;
-    colors = ["#468966","#FFF0A5", "#FFB03B","#B64926", "#8E2800"];
+    colors = ["#ff33cc","#0099ff", "#00ff00","#66ff66", "#ffffff"];
     
     constructor(_x, _y,_two) {
         this.x = _x;
         this.y = _y;
-        this.color = this.colors[Math.floor(Math.random()*6)];
+        this.color = this.colors[Math.floor(Math.random()*5)];
         this.originX = _x;
         this.originY = _y;
         this.two = _two;
@@ -44,7 +43,7 @@ export class Particle {
         var b = this.y - _mousePositionY;
       
         var distance = Math.sqrt( a*a + b*b );
-        if(distance<(this.radius*70)){
+        if(distance<(this.radius*16)){
           this.accX = (this.x - _mousePositionX)/100;
           this.accY = (this.y - _mousePositionY)/100;
           this.vx += this.accX;

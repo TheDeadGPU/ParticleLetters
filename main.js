@@ -2,65 +2,72 @@ import Two from 'https://cdn.skypack.dev/two.js@latest';
 import { ParticleEngine } from './ParticleEngine';
 import { Particle } from './Particle';
 
-var two = new Two({
+const two = new Two({
   type: Two.Types.svg,
   fullscreen: true,
   autostart: true
 }).appendTo(document.body);
 
+const engine = new ParticleEngine(two);
 two.renderer.domElement.style.background = 'black';
 two.renderer.domElement.style.cursor = 'none';
 
-// Initialize
-const engine = new ParticleEngine(two);
-engine.Add(new Particle(1,1,two))
-engine.Add(new Particle(500,500,two))
-engine.Add(new Particle(500,510,two))
-engine.Add(new Particle(500,520,two))
-engine.Add(new Particle(500,530,two))
-engine.Add(new Particle(500,540,two))
-engine.Add(new Particle(500,550,two))
-engine.Add(new Particle(500,560,two))
-engine.Add(new Particle(500,570,two))
-engine.Add(new Particle(500,580,two))
-
-var cx = two.width / 2;
-var cy = two.height / 2;
-var delta = new Two.Vector();
-var mouse = new Two.Vector(cx, cy);
-var drag = 0.33;
-var radius = 50;
-
-var circle = two.makeCircle(400, 250, 75);
-circle.fill = 'yellow';
+const mouse = new Two.Vector(two.width / 2, two.height / 2);
+const circle = two.makeCircle(400, 250, 16);
+circle.fill = 'blue';
 circle.stroke = 'red';
 circle.linewidth = 4;
 
-// Mouse Position
-function onMouseMove(e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  }
+function canvasInit() {
+  engine.ResetEngine();
+  const c = document.getElementById("transposeCanvas");
+  const ctx = c.getContext("2d");
 
-function onTouchMove(e){
-  if(e.touches.length > 0 ){
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
+  const ww = c.width = window.innerWidth;
+  const wh = c.height = window.innerHeight;
+
+  ctx.font = `bold ${ww / 10}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.fillText("TheDeadGPU", ww / 2, wh / 2);
+  const data = ctx.getImageData(0, 0, ww, wh).data;
+
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.globalCompositeOperation = "screen";
+
+  for (let i = 0; i < ww; i += Math.round(ww / 150)) {
+    for (let j = 0; j < wh; j += Math.round(ww / 150)) {
+      if (data[((i + j * ww) * 4) + 3] > 150) {
+        engine.Add(new Particle(i, j, two));
+      }
+    }
   }
 }
 
-function onTouchEnd(e){
-mouse.x = -9999;
-mouse.y = -9999;
+function onPointerMove(e) {
+  mouse.x = e.clientX || e.touches[0].clientX;
+  mouse.y = e.clientY || e.touches[0].clientY;
 }
 
-// Animation Loop
-two.bind('update', function() {
-    circle.position.x = mouse.x;
-    circle.position.y = mouse.y;
-    engine.Animate(mouse.x,mouse.y);
+function onPointerEnd() {
+  mouse.x = -9999;
+  mouse.y = -9999;
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+two.bind('update', () => {
+  engine.Animate(mouse.x, mouse.y);
+  circle.position.x = mouse.x;
+  circle.position.y = mouse.y;
 });
 
-window.addEventListener("mousemove", onMouseMove);
-window.addEventListener("touchmove", onTouchMove);
-window.addEventListener("touchend", onTouchEnd);
+canvasInit();
+window.addEventListener("pointermove", onPointerMove);
+window.addEventListener("pointerup", onPointerEnd);
+window.addEventListener("resize", debounce(canvasInit, 200));

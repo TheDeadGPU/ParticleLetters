@@ -1,10 +1,5 @@
-import { Particle } from './Old Code/Particle-old.js';
-
 export class ParticleEngine {
-    scene;
-    window;
     particles = [];
-    particleShapes = [];
     lastTime = new Date();
     two;
     constructor(_two) {
@@ -26,4 +21,9 @@ export class ParticleEngine {
             this.particles[i].render(_mousePositionX, _mousePositionY);
         }
     }
+    ResetEngine(){
+        this.two.clear();
+        this.particles = [];
+    }
+
 }
