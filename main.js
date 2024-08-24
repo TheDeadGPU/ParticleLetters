@@ -1,57 +1,67 @@
-import * as THREE from 'three';
-import WebGL from 'three/addons/capabilities/WebGL.js';
-import { ParticleHelper } from './ParticleHelper.js';
-import { ParticleEngine } from './ParticleEngine.js';
+import Two from 'https://cdn.skypack.dev/two.js@latest';
+import { ParticleEngine } from './ParticleEngine';
+import { Particle } from './Particle';
 
-if ( WebGL.isWebGL2Available() ) {
+const two = new Two({
+  type: Two.Types.svg,
+  fullscreen: true,
+  autostart: true
+}).appendTo(document.body);
 
-	// Base Component Initialization Here
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    //const camera = new THREE.OrthographicCamera(1,1,1,1,1,1000);
-    const engine = new ParticleEngine(scene, window);
-    var mouseX = 1;
-    var mouseY = 1;
+const engine = new ParticleEngine(two);
+two.renderer.domElement.style.background = 'black';
+two.renderer.domElement.style.cursor = 'none';
 
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
-    
-    // Add Particles Here
-    //engine.Add(ParticleHelper.CreateParticle(1,1,0,0,1,0x00ff00));
-    engine.Add(ParticleHelper.CreateParticle(0,0,0,0,1,0x00ff00));
+const mouse = new Two.Vector(two.width / 2, two.height / 2);
 
-    camera.position.z = 500;
+function canvasInit() {
+  engine.ResetEngine();
+  const c = document.getElementById("transposeCanvas");
+  const ctx = c.getContext("2d");
 
-    // Animation Loop
-	function animate() {
-        engine.Animate(mouseX,mouseY);
-        renderer.render( scene, camera );   
+  const ww = c.width = window.innerWidth;
+  const wh = c.height = window.innerHeight;
+
+  ctx.font = `bold ${ww / 10}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.fillText("TheDeadGPU", ww / 2, wh / 2);
+  const data = ctx.getImageData(0, 0, ww, wh).data;
+
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.globalCompositeOperation = "screen";
+
+  for (let i = 0; i < ww; i += Math.round(ww / 150)) {
+    for (let j = 0; j < wh; j += Math.round(ww / 150)) {
+      if (data[((i + j * ww) * 4) + 3] > 150) {
+        engine.Add(new Particle(i, j, two));
+      }
     }
-
-    // Set Function for Animation Loop
-    renderer.setAnimationLoop( animate );
-
-    // Compute Mouse Position (Not 100% Yet)
-    var raycaster = new THREE.Raycaster();
-    var mouse = new THREE.Vector2();
-    document.addEventListener('mousemove', onMouseMove, false);
-
-    function onMouseMove(event) {
-        // Calculate mouse position in normalized device coordinates
-        // (-1 to +1) for both components
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        this.mouseX = mouse.x;
-        this.mouseY = mouse.y;
-    }
-
-} else {
-
-	const warning = WebGL.getWebGL2ErrorMessage();
-	document.getElementById( 'container' ).appendChild( warning );
-
+  }
 }
 
+function onPointerMove(e) {
+  mouse.x = e.clientX || e.touches[0].clientX;
+  mouse.y = e.clientY || e.touches[0].clientY;
+}
 
+function onPointerEnd() {
+  mouse.x = -9999;
+  mouse.y = -9999;
+}
 
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+two.bind('update', () => {
+  engine.Animate(mouse.x, mouse.y);
+});
+
+canvasInit();
+window.addEventListener("pointermove", onPointerMove);
+window.addEventListener("pointerup", onPointerEnd);
+window.addEventListener("resize", debounce(canvasInit, 200));

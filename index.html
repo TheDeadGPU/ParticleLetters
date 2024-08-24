@@ -2,12 +2,13 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>My first three.js app</title>
+		<title>TheDeadGPU Particle App using Two.js</title>
 		<style>
-			body { margin: 0; }
-			#info {
+			body { margin: 0;
+			}
+			#footer {
 				position: absolute;
-				top: 10px;
+				bottom: 10px;
 				width: 100%;
 				text-align: center;
 				z-index: 100;
@@ -15,9 +16,12 @@
 				color: green;
 			}
 		</style>
+		<script type="module" src="/main.js"></script>
 	</head>
 	<body>
-		<script type="module" src="/main.js"></script>
-		<div id="info">Description</div>
+		<canvas id="transposeCanvas" width="300" height="150" style="border:1px solid grey"></canvas>
+		<div id="footer">Made with ❤️ by TheDeadGPU
+			<p>Based on work by Louis Hoebregts on <a href="https://codepen.io/Mamboleoo/pen/obWGYr">CodePen</a></p>
+		</div>
 	</body>
 </html>
